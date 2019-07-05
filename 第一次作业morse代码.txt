@@ -1,0 +1,84 @@
+﻿#include <Morse.h>
+#include<stdio.h>
+#include<string.h>
+#define SIZE 28
+struct Morse_code{
+    char character;
+    char code[6];};
+struct Morse_code morse1[SIZE] = {
+    'a', ".-",
+    'b', "-...",
+    'c', "-.-.",
+    'd', "-..",
+    'e', ".",
+    'f', "..-.",
+    'g', "--.",
+    'h', "....",
+    'i', "..",
+    'j', ".---",
+    'k', "-.-",
+    'l', ".-..",
+    'm', "--",
+    'n', "-.",
+    'o', "---",
+    'p', ".--.",
+    'q', "--.-",
+    'r', ".-.", 
+   's', "...",
+    't', "-",
+    'u', "..-",
+    'v', "...-",
+    'w', ".--",
+    'x', "-..-",
+    'y', "-.--",
+    'z', "--..",
+    ' ',"@@",
+    '\n',"&&",
+};//morse代码
+int which_zimu(char str)
+{  int a ;
+  if(str == ' '){
+    a == 26;
+  }
+  else if(str == '\n'){
+    a == 27;
+  }
+  else{
+    a = str - 'a';
+  }  return a;
+}
+int setup() {
+  // 输入，第一次运行
+  Serial.begin(9600);
+}
+String inputstr;
+String outputstr;
+Morse morse(13);//13个角码
+int loop() {
+  // 输入主要的字符
+    if(Serial.available() > 0)
+    {
+      inputstr = Serial.readString();
+      int i,j,b;
+      for(i = 0;i < inputstr.length();i++)
+      {
+        int b = which_zimu(inputstr[i]);//确定这一项是那个字母
+        if(b == 26)
+          morse.w_space();//空格大停顿
+        else if(b == 27)
+          morse.w_space();//换行大停顿 
+       else
+        { 
+         outputstr = morse1[b%SIZE].code;
+          for(int j = 0;j < outputstr.length();j++)
+          {
+           if(outputstr[j] == '.')
+              morse.dot();
+           else if(outputstr[j] == '-')
+              morse.dash();
+          }
+            morse.c_space();//每个单词后小停顿 
+       }//'a-z'字母morse码闪烁
+      }
+    }
+}

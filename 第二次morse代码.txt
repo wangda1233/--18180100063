@@ -1,0 +1,121 @@
+﻿#include<stdio.h>
+#include<string.h>
+#define SIZE 28
+class Morse{
+  public:
+    Morse(int pin);
+    int dot();
+    int dash();
+    int c_space();
+    int w_space();
+  private:
+    int _pin;
+    int _dottime;
+};
+Morse::Morse(int pin)
+{
+	pinMode(pin,OUTPUT);
+	_pin=pin;
+	_dottime=250;
+}int Morse::dot()
+{
+	digitalWrite(_pin,HIGH);
+	delay(_dottime);
+	digitalWrite(_pin,LOW);
+	delay(_dottime);
+}
+int Morse::dash(){
+	digitalWrite(_pin,HIGH);
+	delay(_dottime*4);
+	digitalWrite(_pin,LOW);
+	delay(_dottime);
+}
+int Morse::c_space()
+{
+	digitalWrite(_pin,LOW);
+	delay(_dottime*3);
+}
+int Morse::w_space(){
+	digitalWrite(_pin,LOW);
+	delay(_dottime*7);
+}
+struct Morse_code{
+    char character;
+    char code[6];
+};
+struct Morse_code morse1[SIZE] = {
+    'a', ".-",
+    'b', "-...",
+    'c', "-.-.",
+    'd', "-..",
+    'e', ".",
+    'f', "..-.",
+    'g', "--.",
+    'h', "....",
+    'i', "..",
+    'j', ".---",
+    'k', "-.-",
+    'l', ".-..",
+    'm', "--",
+    'n', "-.",
+    'o', "---",
+    'p', ".--.",
+    'q', "--.-",
+    'r', ".-.",
+    's', "...",
+    't', "-",
+    'u', "..-",
+    'v', "...-",
+    'w', ".--",
+    'x', "-..-",
+    'y', "-.--",
+    'z', "--..",
+    ' ',"@@",
+    '\n',"&&",
+};//'a-z'morse code
+int which_zimu(char str){
+  int a ;
+  if(str == ' '){
+    a == 26;
+  }  
+else if(str == '\n')
+{ 
+   a == 27;
+  } 
+ else
+{
+    a = str - 'a';
+  }
+  return a;
+}
+int setup() { 
+ // put your setup code here, to run once:
+  Serial.begin(9600);
+}
+String inputstr;
+String outputstr;
+Morse morse(13);//13角码
+int loop() {
+  inputstr = Serial.readString();
+  int i,j,b;
+  for(i = 0;i < inputstr.length();i++)
+  { 
+   int b = which_one(inputstr[i]);//输入运行
+    if(b == 26)
+      morse.w_space();
+    else if(b == 27)
+      morse.w_space();
+    else 
+   { 
+     outputstr = morse1[b%SIZE].code;
+      for(int j = 0;j < outputstr.length();j++)
+      {
+       if(outputstr[j] == '.')
+          morse.dot();
+       else if(outputstr[j] == '-')
+          morse.dash();
+      }
+      morse.c_space();
+    }//'a-z'字母morse码闪烁
+  }
+}
